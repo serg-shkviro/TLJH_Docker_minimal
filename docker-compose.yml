@@ -1,6 +1,18 @@
-version: '3'
+version: '3.8'
 services:
-  web:
+  hub:
     build: .
+    container_name: jupyterhub
+    restart: unless-stopped
     ports:
-      - "12000:80"
+      - "12000:8000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+      - hub-data:/srv/jupyterhub
+      - ./volume/admin/:/srv/jupyterhub:rw
+      - ./jupyterhub_config_local_spawner.py:/srv/jupyterhub/jupyterhub_config.py:ro
+    environment:
+      - DOCKER_NETWORK_NAME=${COMPOSE_PROJECT_NAME}_default
+      - DOCKER_NOTEBOOK_IMAGE=jupyter/base-notebook:latest
+volumes:
+  hub-data:

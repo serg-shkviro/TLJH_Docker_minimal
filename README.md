@@ -1,25 +1,28 @@
 # TLJH_Docker
-The Littlest JupyterHub (TLJH) distribution helps you to provide Jupyter Notebooks to 1-100 users on a single server.  
 
-1. Clone this Repo  
+Данный репозиторий является форком!!!
+
+Спасибо большое оригинальному автору!
+
 `git clone https://github.com/imSrbh/TLJH_Docker.git`
 
-2. Build a docker image that has a functional systemd in it.  
-```
-docker build -t tljh-systemd . -f Dockerfile
-```
-​	___do not forget the period (.)___
+---
+Дистрибутив Littlest JupyterHub (TLJH) поможет вам предоставить Jupyter Notebooks от 1 до 100 пользователям на одном сервере.
 
+Шаги запуска используя только Docker:
 
-3. Run a docker container with the image in the background, while bind mounting your TLJH repository under /srv/src.
+1. Склонировать репозиторий
+`https://github.com/serg-shkviro/TLJH_Docker_minimal.git`
+
+2. Собрать образ
 ```
-docker run \
-  --privileged \
-  --detach \
-  --name=tljh-dev \
-  --publish 12000:80 \
-  --mount type=bind,source=$(pwd),target=/srv/src \
-  tljh-systemd
+docker build -t tljh-dev .
+```
+
+3. Запуск без docker-compose (привелигерованный режим нужен). Если не уверены, насчёт настроек, то посмотрите подходят ли Вам данные [параметры](https://docs.docker.com/reference/cli/docker/container/run/#privileged): 
+
+```bash
+docker run --privileged -d --name=tljh-dev -p 12000:80 -v $(pwd):/srv/src:rw   tljh-systemd
 ```
 
 4. Get a shell inside the running docker container.
@@ -29,7 +32,7 @@ docker run \
 
 5. Run the bootstrapper from inside the container (see step above): The container image is already set up to default to a dev install, so it’ll install from your local repo rather than from github.
 ```python
-	python3 /srv/src/bootstrap/bootstrap.py --admin admin:password
+docker exec -it tljh-dev python3 /srv/src/bootstrap/bootstrap.py --admin admin:password
 ```
 
 
@@ -51,11 +54,9 @@ jupyter-abc  jupyter-xyz
 
 ---
 
-# Using docker-compose
+# Использование docker-compose
 
-
-
-1.  Clone the repo `git clone https://github.com/imSrbh/TLJH_Docker.git`
+1.   `git clone https://github.com/imSrbh/TLJH_Docker.git`
 2.  Create the container for service
 ```
 docker-compose up --build -d
